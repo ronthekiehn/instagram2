@@ -176,6 +176,24 @@
 
     let editingTile = null;
 
+
+    //so many ridiculous functions bruh
+    //from https://stackoverflow.com/questions/13070054/convert-rgb-strings-to-hex-in-javascript
+
+    function rgbToHex(rgb) {
+      let a = rgb.split("(")[1].split(")")[0];
+
+      a = a.split(",");
+
+      let b = a.map(function(x) { //For each array element
+        x = parseInt(x).toString(16); //Convert to a base16 string
+        return (x.length === 1) ? "0" + x : x; //Add zero if we get only one character
+      })
+
+      b = "#" + b.join("");
+      return b;
+
+    }
     document.querySelectorAll('.settings').forEach(btn => {
       btn.addEventListener('click', function(e) {
         // Prevent the click from triggering drag events or other tile events
@@ -188,13 +206,15 @@
         document.getElementById('settings-panel').classList.remove('hidden');
 
 
-        const initcolor = editingTile.style.backgroundColor;
-        console.log(initcolor);
+        const initcolor = rgbToHex(window.getComputedStyle(editingTile).backgroundColor);
+
 
         document.getElementById('color-picker').value = initcolor
 
       });
     });
+
+
 
 
 
