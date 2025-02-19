@@ -32,7 +32,6 @@
     aspect-ratio: 1;
     border-radius: 20px;
     background-color: #ddd;
-    border: 3px solid black;
     text-align: center;
     cursor: move;
     user-select: none;
@@ -44,6 +43,9 @@
     border: none;
     opacity: 0%;
     font-size: 2rem;
+    bottom: 3px;
+    right: 3px;
+    cursor: pointer;
   }
 
   .tile:hover .settings {
@@ -62,6 +64,21 @@
   .hidden {
     display: none;
   }
+  
+  #tile1{
+  }
+  
+  #tile2{
+    background-color: white;
+    border: 3px solid black;
+    display: flex;
+    flex-direction: column;
+    font-family: sans-serif;
+    font-size: 1.4rem;
+    padding: 20px;
+    text-align: left;
+  }
+  
 </style>
 
 <body>
@@ -72,7 +89,12 @@
       <div class="tile" draggable="true" id="tile1">Tile 1
         <button class="settings">⚙</button>
       </div>
-      <div class="tile" draggable="true" id="tile2">Tile 2
+      <div class="tile" draggable="true" id="tile2">
+        <strong>Ron Kiehn</strong>
+        <i>he/him</i>
+        <br>
+        <br>
+        <span><strong>9 </strong>posts</span>
         <button class="settings">⚙</button>
       </div>
       <div class="tile" draggable="true" id="tile3">Tile 3
