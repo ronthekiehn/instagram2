@@ -1,0 +1,215 @@
+<style>
+  body {
+    display: flex;
+  }
+
+  .phone {
+    margin: auto;
+    border: 10px solid black;
+    border-radius: 75px;
+    padding: 20px;
+    width: 400px;
+
+  }
+
+  .pill {
+    border-radius: 999px;
+    background-color: black;
+    width: 120px;
+    height: 30px;
+    margin: auto;
+    margin-bottom: 20px;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 10px;
+  }
+
+  .tile {
+    aspect-ratio: 1;
+    border-radius: 20px;
+    background-color: #ddd;
+    border: 3px solid black;
+    text-align: center;
+    cursor: move;
+    user-select: none;
+  }
+
+  .tile .settings {
+    background: none;
+    border: none;
+    display: none;
+    font-size: 2rem;
+  }
+
+  .tile:hover .settings {
+    display: block;
+  }
+
+  .drag-over {
+    border: 2px dashed black;
+  }
+
+  .dragging {
+    opacity: 0.5;
+  }
+
+  .hidden {
+    display: none;
+  }
+</style>
+
+<body>
+
+  <div class="phone">
+    <div class="pill"></div>
+    <div class="grid">
+      <div class="tile" draggable="true" id="tile1">Tile 1
+        <button class="settings">⚙</button>
+      </div>
+      <div class="tile" draggable="true" id="tile2">Tile 2
+        <button class="settings">⚙</button>
+      </div>
+      <div class="tile" draggable="true" id="tile3">Tile 3
+        <button class="settings">⚙</button>
+      </div>
+      <div class="tile" draggable="true" id="tile4">Tile 4
+        <button class="settings">⚙</button>
+      </div>
+      <div class="tile" draggable="true" id="tile5">Tile 5
+        <button class="settings">⚙</button>
+      </div>
+      <div class="tile" draggable="true" id="tile6">Tile 6
+        <button class="settings">⚙</button>
+      </div>
+      <div class="tile" draggable="true" id="tile7">Tile 7
+        <button class="settings">⚙</button>
+      </div>
+      <div class="tile" draggable="true" id="tile8">Tile 8
+        <button class="settings">⚙</button>
+      </div>
+    </div>
+  </div>
+
+
+  <div id="settings-panel" class="hidden">
+    <label for="color-picker">Pick a background color:</label>
+    <input type="color" id="color-picker">
+    <!-- Future options for images and text can go here -->
+    <button id="close-panel">Close</button>
+  </div>
+
+
+  <script>
+    let dragSrcEl = null;
+
+    function handleDragStart(e) {
+      // Remember the dragged element
+      dragSrcEl = this;
+      e.dataTransfer.effectAllowed = 'move';
+      // Store the id of the dragged element so we can retrieve it on drop
+      e.dataTransfer.setData('text/plain', this.id);
+      this.classList.add('dragging');
+    }
+
+    function handleDragOver(e) {
+      // Allow dropping by preventing default behavior
+      if (e.preventDefault) {
+        e.preventDefault();
+      }
+      e.dataTransfer.dropEffect = 'move';
+      return false;
+    }
+
+    function handleDragEnter(e) {
+      // Highlight the potential drop target
+      this.classList.add('drag-over');
+    }
+
+    function handleDragLeave(e) {
+      // Remove highlight
+      this.classList.remove('drag-over');
+    }
+
+    function handleDrop(e) {
+      e.stopPropagation();
+
+      if (dragSrcEl !== this) {
+        const parent = dragSrcEl.parentNode;
+        // Convert the parent's children to an array so we can easily get their indexes.
+        const children = Array.from(parent.children);
+        const draggedIndex = children.indexOf(dragSrcEl);
+        const dropIndex = children.indexOf(this);
+
+        // If the dragged element comes before the drop target, it's moving forward,
+        // so we insert it AFTER the drop target.
+        if (draggedIndex < dropIndex) {
+          parent.insertBefore(dragSrcEl, this.nextElementSibling);
+        } else {
+          // If moving backward, insert it BEFORE the drop target.
+          parent.insertBefore(dragSrcEl, this);
+        }
+      }
+      return false;
+    }
+
+    function handleDragEnd(e) {
+      // Remove any added classes for a clean finish
+      this.classList.remove('dragging');
+      document.querySelectorAll('.tile').forEach(tile => {
+        tile.classList.remove('drag-over');
+      });
+    }
+
+    // Attach event listeners to each tile
+    document.querySelectorAll('.tile').forEach(tile => {
+      tile.addEventListener('dragstart', handleDragStart, false);
+      tile.addEventListener('dragenter', handleDragEnter, false);
+      tile.addEventListener('dragover', handleDragOver, false);
+      tile.addEventListener('dragleave', handleDragLeave, false);
+      tile.addEventListener('drop', handleDrop, false);
+      tile.addEventListener('dragend', handleDragEnd, false);
+    });
+
+
+    let editingTile = null;
+
+    document.querySelectorAll('.settings').forEach(btn => {
+      btn.addEventListener('click', function(e) {
+        // Prevent the click from triggering drag events or other tile events
+        e.stopPropagation();
+
+        // Get the parent tile of this button
+        editingTile = this.parentElement;
+
+        // Show the settings panel
+        document.getElementById('settings-panel').classList.remove('hidden');
+
+
+        const initcolor = editingTile.style.backgroundColor;
+        console.log(initcolor);
+
+        document.getElementById('color-picker').value = initcolor
+
+      });
+    });
+
+
+
+    document.getElementById('color-picker').addEventListener('input', function() {
+      if (editingTile) {
+        editingTile.style.backgroundColor = this.value;
+        // Optionally, save this setting in localStorage for persistence
+      }
+    });
+
+    document.getElementById('close-panel').addEventListener('click', function() {
+      document.getElementById('settings-panel').classList.add('hidden');
+      // Optionally, clear currentTile or do any cleanup necessary
+      currentTile = null;
+    });
+  </script>
+
+</body>
