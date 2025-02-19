@@ -65,7 +65,16 @@
     display: none;
   }
   
+  #settings-panel{
+    position: absolute;
+    right: 0;
+    margin: 10px;
+    max-width: 200px;
+  }
+  
   #tile1{
+    background: url(ron2.jpeg);
+    background-size: cover;
   }
   
   #tile2{
@@ -141,6 +150,11 @@
     <label for="color-picker">Pick a background color:</label>
     <input type="color" id="color-picker">
     <!-- Future options for images and text can go here -->
+    <p>OR</p>
+    <label for="image-picker">Upload an image:</label>
+<input type="file" id="image-picker" accept="image/*">
+    <br>
+    <br>
     <button id="close-panel">Close</button>
   </div>
 
@@ -262,11 +276,25 @@
 
 
     document.getElementById('color-picker').addEventListener('input', function() {
-      if (editingTile) {
-        editingTile.style.backgroundColor = this.value;
-        // Optionally, save this setting in localStorage for persistence
-      }
-    });
+  if (editingTile) {
+    editingTile.style.backgroundColor = this.value;
+    editingTile.style.backgroundImage = ""; // Remove image if color is selected
+  }
+});
+    
+    document.getElementById('image-picker').addEventListener('change', function(event) {
+  if (editingTile && editingTile.id !== "tile2") {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        editingTile.style.backgroundImage = `url(${e.target.result})`;
+        editingTile.style.backgroundSize = 'cover'; // Ensure the image fits well
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+});
 
     document.getElementById('close-panel').addEventListener('click', function() {
       document.getElementById('settings-panel').classList.add('hidden');
